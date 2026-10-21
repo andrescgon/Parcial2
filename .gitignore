@@ -1,3 +1,5 @@
 __pycache__/
 backend/
 test/
+raw/
+aws_credentials.tmp

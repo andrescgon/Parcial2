@@ -1,0 +1,9 @@
+assumptions: "1000 active users, 5000 bookings/day, 2M reservation records (approx 80MB raw CSV, 25MB curated Parquet in 24 monthly partitions)"
+line_items:
+  - {service: "RDS", detail: "db.t3.micro, 20 GB gp2, single-AZ", monthly_usd: 14.50}
+  - {service: "EC2", detail: "t3.small backend and frontend SPA in single instance", monthly_usd: 15.18}
+  - {service: "S3", detail: "Standard storage 5 GB + API GET/PUT requests", monthly_usd: 0.25}
+  - {service: "Athena", detail: "Managerial queries (~5 GB scanned/month)", monthly_usd: 0.05}
+  - {service: "EMR", detail: "1 monthly batch run, 3 x m4.large, 0.5 h", monthly_usd: 0.35}
+  - {service: "Glue", detail: "Data Catalog metadata storage (< 1M objects)", monthly_usd: 0.00}
+

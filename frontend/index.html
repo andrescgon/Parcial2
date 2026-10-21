@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Airline Reservation System - Búsqueda y Reserva</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 2rem; background: #f8fafc; color: #1e293b; }
+    .container { max-width: 800px; margin: 0 auto; background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
+    h1 { color: #0f172a; margin-top: 0; }
+    .form-group { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+    .form-control { flex: 1; min-width: 150px; display: flex; flex-direction: column; gap: 0.25rem; }
+    input, button { padding: 0.6rem 0.8rem; font-size: 1rem; border: 1px solid #cbd5e1; border-radius: 6px; }
+    button { background: #2563eb; color: white; border: none; cursor: pointer; font-weight: 600; }
+    button:hover { background: #1d4ed8; }
+    .flight-item { border: 1px solid #e2e8f0; border-radius: 6px; padding: 1rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; }
+    #reservation-box { margin-top: 1.5rem; padding: 1.5rem; border: 2px dashed #93c5fd; border-radius: 8px; background: #eff6ff; display: none; }
+    #confirmation-section { margin-top: 1.5rem; padding: 1.5rem; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; display: none; }
+    .conf-badge { font-size: 1.5rem; font-weight: 700; color: #166534; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Reserva de Vuelos</h1>
+    <div class="form-group">
+      <div class="form-control">
+        <label>Origen</label>
+        <input type="text" data-testid="search-origin" placeholder="BOG" />
+      </div>
+      <div class="form-control">
+        <label>Destino</label>
+        <input type="text" data-testid="search-destination" placeholder="MDE" />
+      </div>
+      <div class="form-control">
+        <label>Fecha</label>
+        <input type="date" data-testid="search-date" />
+      </div>
+      <div class="form-control" style="justify-content: flex-end;">
+        <button type="button" data-testid="search-submit" onclick="searchFlights()">Buscar Vuelos</button>
+      </div>
+    </div>
+
+    <div id="results-container"></div>
+
+    <div id="reservation-box">
+      <h3>Completar Reserva para Vuelo <span id="selected-flight-id"></span></h3>
+      <div class="form-group">
+        <div class="form-control">
+          <label>Nombre del Pasajero</label>
+          <input type="text" data-testid="passenger-name" placeholder="Nombre completo" />
+        </div>
+        <div class="form-control" style="justify-content: flex-end;">
+          <button type="button" data-testid="confirm-submit" onclick="submitReservation()">Confirmar Reserva</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="confirmation-section">
+      <h3>¡Reserva Confirmada Exitosamente!</h3>
+      <p>ID de confirmación: <span data-testid="confirmation-id" class="conf-badge"></span></p>
+    </div>
+  </div>
+
+  <script>
+    let activeFlightId = null;
+
+    async function searchFlights() {
+      const origin = document.querySelector('[data-testid="search-origin"]').value.trim();
+      const destination = document.querySelector('[data-testid="search-destination"]').value.trim();
+      const date = document.querySelector('[data-testid="search-date"]').value.trim();
+
+      const container = document.getElementById("results-container");
+      container.innerHTML = "<p>Buscando vuelos...</p>";
+      document.getElementById("reservation-box").style.display = "none";
+      document.getElementById("confirmation-section").style.display = "none";
+
+      try {
+        const res = await fetch(`/flights/search?origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}&date=${encodeURIComponent(date)}`);
+        if (!res.ok) throw new Error("Error al consultar vuelos");
+        const flights = await res.json();
+
+        container.innerHTML = "";
+        if (flights.length === 0) {
+          container.innerHTML = "<p>No se encontraron vuelos disponibles para los criterios seleccionados.</p>";
+          return;
+        }
+
+        flights.forEach(f => {
+          const row = document.createElement("div");
+          row.className = "flight-item";
+          row.setAttribute("data-testid", "flight-row");
+          row.innerHTML = `
+            <div>
+              <strong>${f.flight_id}</strong> (${f.route}) - Fecha: ${f.flight_date}<br>
+              Asientos disponibles: <strong>${f.seats_available}</strong> | Precio: $${(f.price_cents / 100).toFixed(2)}
+            </div>
+            <div>
+              <button type="button" data-testid="reserve-button" onclick="selectFlight('${f.flight_id}')">Reservar</button>
+            </div>
+          `;
+          container.appendChild(row);
+        });
+      } catch (err) {
+        container.innerHTML = `<p style="color: red;">Error: ${err.message}</p>`;
+      }
+    }
+
+    function selectFlight(flightId) {
+      activeFlightId = flightId;
+      document.getElementById("selected-flight-id").innerText = flightId;
+      document.getElementById("reservation-box").style.display = "block";
+      document.getElementById("confirmation-section").style.display = "none";
+      document.querySelector('[data-testid="passenger-name"]').focus();
+    }
+
+    async function submitReservation() {
+      const passengerName = document.querySelector('[data-testid="passenger-name"]').value.trim();
+      if (!passengerName || !activeFlightId) {
+        alert("Por favor ingrese el nombre del pasajero.");
+        return;
+      }
+
+      try {
+        const res = await fetch("/reservations", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            flight_id: activeFlightId,
+            passenger_name: passengerName,
+            fare_class: "ECONOMY"
+          })
+        });
+
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          throw new Error(errData.detail || `Error HTTP ${res.status}`);
+        }
+
+        const data = await res.json();
+        document.querySelector('[data-testid="confirmation-id"]').innerText = data.reservation_id;
+        document.getElementById("confirmation-section").style.display = "block";
+        document.getElementById("reservation-box").style.display = "none";
+      } catch (err) {
+        alert(`Fallo en la reserva: ${err.message}`);
+      }
+    }
+  </script>
+</body>
+</html>
+
