@@ -1,10 +1,10 @@
 {
   "meta": {
     "team_id": "kevin_andres",
-    "seed": 874
+    "seed": 3604
   },
-  "generated_at": "2026-10-19 00:22:25",
-  "points": 27.0,
+  "generated_at": "2026-10-22 06:11:02",
+  "points": 70.0,
   "max_points": 70.0,
   "requirements": [
     {
@@ -21,7 +21,7 @@
         }
       ],
       "evidence": [
-        "100 requests, concurrency 20: p50=0.047s p95=0.064s"
+        "100 requests, concurrency 20: p50=0.179s p95=0.260s"
       ],
       "warnings": []
     },
@@ -49,11 +49,11 @@
         "round 3: 201=1 409=49 other=0",
         "round 4: 201=1 409=49 other=0",
         "round 5: 201=1 409=49 other=0",
-        "K=3 round 1: 201=3",
-        "K=3 round 2: 201=3",
-        "K=3 round 3: 201=3",
-        "K=3 round 4: 201=3",
-        "K=3 round 5: 201=3"
+        "K=8 round 1: 201=8",
+        "K=8 round 2: 201=8",
+        "K=8 round 3: 201=8",
+        "K=8 round 4: 201=8",
+        "K=8 round 5: 201=8"
       ],
       "warnings": []
     },
@@ -82,19 +82,55 @@
       "id": "R4",
       "title": "EMR job produces curated Parquet",
       "weight": 8,
-      "points": 0.0,
-      "status": "not_verified",
-      "tests": [],
-      "evidence": [],
+      "points": 8.0,
+      "status": "passed",
+      "tests": [
+        {
+          "name": "test_emr_run_completed",
+          "outcome": "passed",
+          "detail": ""
+        },
+        {
+          "name": "test_parquet_written_by_emr",
+          "outcome": "passed",
+          "detail": ""
+        },
+        {
+          "name": "test_cleaning_row_count_and_revenue",
+          "outcome": "passed",
+          "detail": ""
+        }
+      ],
+      "evidence": [
+        "2 COMPLETED EMR step/job runs found",
+        "24/24 parquet files were written inside a COMPLETED EMR run window",
+        "curated rows: expected 2006136, got 2006136"
+      ],
       "warnings": []
     },
     {
       "id": "R5",
       "title": "Glue Catalog tables per contract",
       "weight": 6,
-      "points": 0.0,
-      "status": "not_verified",
-      "tests": [],
+      "points": 6.0,
+      "status": "passed",
+      "tests": [
+        {
+          "name": "test_detail_table_contract",
+          "outcome": "passed",
+          "detail": ""
+        },
+        {
+          "name": "test_detail_partitions_registered",
+          "outcome": "passed",
+          "detail": ""
+        },
+        {
+          "name": "test_metrics_table_contract",
+          "outcome": "passed",
+          "detail": ""
+        }
+      ],
       "evidence": [],
       "warnings": []
     },
@@ -102,20 +138,52 @@
       "id": "R6",
       "title": "Athena correctness and partition pruning",
       "weight": 8,
-      "points": 0.0,
-      "status": "not_verified",
-      "tests": [],
-      "evidence": [],
+      "points": 8.0,
+      "status": "passed",
+      "tests": [
+        {
+          "name": "test_top10_routes",
+          "outcome": "passed",
+          "detail": ""
+        },
+        {
+          "name": "test_partition_pruning_scan",
+          "outcome": "passed",
+          "detail": ""
+        }
+      ],
+      "evidence": [
+        "top-10 routes and occupancies match the oracle within tolerance",
+        "one-month query scanned 305278 B; limit 1633145 B (avg partition 816572 B)"
+      ],
       "warnings": []
     },
     {
       "id": "R7",
       "title": "Analytics endpoint backed by Athena",
       "weight": 8,
-      "points": 0.0,
-      "status": "not_verified",
-      "tests": [],
-      "evidence": [],
+      "points": 8.0,
+      "status": "passed",
+      "tests": [
+        {
+          "name": "test_endpoint_matches_oracle_and_uses_athena",
+          "outcome": "passed",
+          "detail": ""
+        },
+        {
+          "name": "test_endpoint_unknown_is_404",
+          "outcome": "passed",
+          "detail": ""
+        }
+      ],
+      "evidence": [
+        "CUC-PSO 2024-03: ok in 1.41s",
+        "PSO-ADZ 2024-09: ok in 1.33s",
+        "BGA-PEI 2024-11: ok in 1.87s",
+        "MDE-CTG 2023-11: ok in 1.32s",
+        "BOG-SMR 2024-08: ok in 1.30s",
+        "7 Athena queries submitted during the probes"
+      ],
       "warnings": []
     },
     {
@@ -132,7 +200,7 @@
         }
       ],
       "evidence": [
-        "UI created reservation 44 for a flight; backend returns it"
+        "UI created reservation 48 for a flight; backend returns it"
       ],
       "warnings": []
     },
@@ -150,7 +218,7 @@
         }
       ],
       "evidence": [
-        "LET-PSO 2024-05: panel=0.8570 endpoint=0.8566 truth=0.8566"
+        "LET-CUC 2023-07: panel=0.7600 endpoint=0.7601 truth=0.7601"
       ],
       "warnings": []
     },
@@ -158,30 +226,73 @@
       "id": "R10",
       "title": "No leftover EMR / bounded EMR hours",
       "weight": 5,
-      "points": 0.0,
-      "status": "not_verified",
-      "tests": [],
-      "evidence": [],
+      "points": 5.0,
+      "status": "passed",
+      "tests": [
+        {
+          "name": "test_no_running_emr",
+          "outcome": "passed",
+          "detail": ""
+        },
+        {
+          "name": "test_emr_hours_cap",
+          "outcome": "passed",
+          "detail": ""
+        }
+      ],
+      "evidence": [
+        "active clusters=[] started serverless apps=0",
+        "normalized instance hours used: 12.0 (cap 150)"
+      ],
       "warnings": []
     },
     {
       "id": "R11",
       "title": "Simple low-cost architecture",
       "weight": 4,
-      "points": 0.0,
-      "status": "not_verified",
-      "tests": [],
-      "evidence": [],
-      "warnings": []
+      "points": 4.0,
+      "status": "passed",
+      "tests": [
+        {
+          "name": "test_instance_classes",
+          "outcome": "passed",
+          "detail": ""
+        },
+        {
+          "name": "test_no_nat_and_service_count",
+          "outcome": "passed",
+          "detail": ""
+        }
+      ],
+      "evidence": [
+        "billable services in use: ['Athena', 'EC2', 'EMR', 'Glue', 'Lambda', 'RDS', 'S3']"
+      ],
+      "warnings": [
+        "could not inspect: ['CloudFront'] (not counted)"
+      ]
     },
     {
       "id": "R12",
       "title": "Cost projection",
       "weight": 4,
-      "points": 0.0,
-      "status": "not_verified",
-      "tests": [],
-      "evidence": [],
+      "points": 4.0,
+      "status": "passed",
+      "tests": [
+        {
+          "name": "test_projection_file",
+          "outcome": "passed",
+          "detail": ""
+        },
+        {
+          "name": "test_projection_consistent_with_live",
+          "outcome": "passed",
+          "detail": ""
+        }
+      ],
+      "evidence": [
+        "declared total 31.4 USD/month; limit 50.00 (min of 1.5x reference 60.0 and budget 50.0)",
+        "cost estimated from live resources: 27.95 {'RDS': 12.41, 'EC2': 15.18, 'EMR': 0.36, 'Athena': 0.0, 'S3': 0.0}"
+      ],
       "warnings": []
     }
   ]
