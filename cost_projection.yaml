@@ -1,9 +1,8 @@
-assumptions: "1000 active users, 5000 bookings/day, 2M reservation records (approx 80MB raw CSV, 25MB curated Parquet in 24 monthly partitions)"
+assumptions: "1000 usuarios activos, 5000 reservas/dia, 2.08M filas crudas (106 MB CSV en S3) que el job de EMR reduce a 2.006.136 filas curadas (19,6 MB de Parquet Snappy en 24 particiones mensuales). Un run de EMR al mes. El panel gerencial hace ~1000 consultas/mes a Athena, cada una escaneando una particion (~0,8 MB) gracias a la poda por mes."
 line_items:
-  - {service: "RDS", detail: "db.t3.micro, 20 GB gp2, single-AZ", monthly_usd: 14.50}
-  - {service: "EC2", detail: "t3.small backend and frontend SPA in single instance", monthly_usd: 15.18}
-  - {service: "S3", detail: "Standard storage 5 GB + API GET/PUT requests", monthly_usd: 0.25}
-  - {service: "Athena", detail: "Managerial queries (~5 GB scanned/month)", monthly_usd: 0.05}
-  - {service: "EMR", detail: "1 monthly batch run, 3 x m4.large, 0.5 h", monthly_usd: 0.35}
-  - {service: "Glue", detail: "Data Catalog metadata storage (< 1M objects)", monthly_usd: 0.00}
-
+  - {service: "RDS", detail: "db.t3.micro Single-AZ (12.41) + 20 GB gp2 (2.30), sin backups", monthly_usd: 14.71}
+  - {service: "EC2", detail: "t3.small sirviendo backend FastAPI y frontend (15.18) + 8 GB gp3 (0.64)", monthly_usd: 15.82}
+  - {service: "S3", detail: "0.11 GB (raw CSV + Parquet curado + logs de EMR + resultados de Athena)", monthly_usd: 0.10}
+  - {service: "Athena", detail: "~1 GB escaneado/mes gracias a particionado por mes y Parquet columnar", monthly_usd: 0.05}
+  - {service: "EMR", detail: "1 run/mes, 3 x m4.large con auto-terminate, 24 normalized instance hours", monthly_usd: 0.72}
+  - {service: "Glue", detail: "Data Catalog: 2 tablas y 24 particiones, por debajo del millon de objetos gratis", monthly_usd: 0.00}
