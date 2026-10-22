@@ -84,3 +84,37 @@ def search_flights(
                 }
                 for r in rows
             ]
+
+@router.get("/admin/flights")
+def list_admin_flights():
+    """
+    Lista los vuelos que todavía tienen asientos, agrupados por ruta y fecha.
+    No forma parte del contrato ni lo usa el harness: existe para saber qué
+    buscar en el frontend durante una demostración.
+    """
+    query = """
+        SELECT origin, destination, flight_date,
+               count(*) AS vuelos,
+               sum(seats_available) AS asientos_libres
+        FROM flights
+        WHERE seats_available > 0
+        GROUP BY origin, destination, flight_date
+        ORDER BY asientos_libres DESC, flight_date;
+    """
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(query)
+            rows = cur.fetchall()
+            return {
+                "para_buscar_en_la_pagina": [
+                    {
+                        "origen": r["origin"],
+                        "destino": r["destination"],
+                        "fecha": r["flight_date"],
+                        "vuelos": r["vuelos"],
+                        "asientos_libres": int(r["asientos_libres"]),
+                    }
+                    for r in rows
+                ],
+                "combinaciones": len(rows),
+            }
