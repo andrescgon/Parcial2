@@ -3,3 +3,7 @@ backend/
 test/
 raw/
 aws_credentials.tmp
+*.pem
+.env
+cost_projection.local.yaml
+raw_sample/

@@ -1,5 +1,5 @@
 team_id: "kevin_andres"
-seed: 874
+seed: 3604
 
 backend:
   base_url: "http://127.0.0.1:8000"
@@ -10,7 +10,7 @@ aws:
   region: us-east-1
   athena_workgroup: primary
   athena_database: airline_analytics
-  athena_output: "s3://airline-analytics-bucket-874/athena-results/"
+  athena_output: "s3://airline-analytics-3604-723400800674/athena-results/"
   tables:
     detail: reservations_curated
     metrics: route_month_metrics

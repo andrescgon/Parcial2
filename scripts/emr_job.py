@@ -81,7 +81,7 @@ def main():
     )
 
     curated_target = f"{output_path}/reservations_curated"
-    curated.write \
+    curated.repartition("month").write \
         .mode("overwrite") \
         .partitionBy("month") \
         .parquet(curated_target)
@@ -118,7 +118,7 @@ def main():
     )
 
     metrics_target = f"{output_path}/route_month_metrics"
-    metrics.write \
+    metrics.coalesce(1).write \
         .mode("overwrite") \
         .parquet(metrics_target)
     print(f"Escrito route_month_metrics en {metrics_target}")

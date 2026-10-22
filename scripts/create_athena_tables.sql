@@ -20,7 +20,7 @@ CREATE EXTERNAL TABLE IF NOT EXISTS airline_analytics.reservations_curated (
 )
 PARTITIONED BY (month STRING)
 STORED AS PARQUET
-LOCATION 's3://REEMPLAZAR_CON_TU_BUCKET/curated/reservations_curated/'
+LOCATION 's3://airline-analytics-3604-723400800674/curated/reservations_curated/'
 TBLPROPERTIES ('parquet.compression'='SNAPPY');
 
 -- Registrar automáticamente las 24 particiones en el Catálogo de Glue:
@@ -42,6 +42,6 @@ CREATE EXTERNAL TABLE IF NOT EXISTS airline_analytics.route_month_metrics (
     cancellations BIGINT
 )
 STORED AS PARQUET
-LOCATION 's3://REEMPLAZAR_CON_TU_BUCKET/curated/route_month_metrics/'
+LOCATION 's3://airline-analytics-3604-723400800674/curated/route_month_metrics/'
 TBLPROPERTIES ('parquet.compression'='SNAPPY');
 

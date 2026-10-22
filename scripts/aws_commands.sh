@@ -40,5 +40,5 @@ aws emr create-cluster \
 echo "=== 3. Tablas en Glue / Athena ==="
 # Una vez el clúster pase a estado COMPLETED:
 # Ejecuta en la consola de Athena o vía AWS CLI el script 'scripts/create_athena_tables.sql'
-# reemplazando REEMPLAZAR_CON_TU_BUCKET por '$BUCKET_NAME'.
+# usando el bucket definido en scripts/env.sh
 

@@ -11,8 +11,8 @@ import os
 
 # ── AWS Session ──
 session = boto3.Session(region_name="us-east-1")
-BUCKET = "airline-analytics-kevin-874"
-ACCOUNT = "458849247707"
+BUCKET = os.environ["BUCKET"]
+ACCOUNT = boto3.client("sts").get_caller_identity()["Account"]
 
 def log(msg):
     print(f"[{time.strftime('%H:%M:%S')}] {msg}", flush=True)
@@ -42,7 +42,7 @@ def create_bucket():
 # ═══════════════════════════════════════════════════════════════
 def upload_to_s3():
     s3 = session.client("s3")
-    base = "/home/keni_garcia/Documents/backend-aerolinea"
+    base = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
     files_to_upload = [
         (f"{base}/raw/flights.csv", "raw/flights.csv"),
@@ -187,7 +187,7 @@ def create_rds(sg_id):
             Engine="postgres",
             EngineVersion="16.4",
             MasterUsername="postgres",
-            MasterUserPassword="ClaveLocal123",
+            MasterUserPassword=os.environ["DB_PASSWORD"],
             AllocatedStorage=20,
             StorageType="gp2",
             DBName="sistema_reservas",
@@ -238,8 +238,8 @@ apt-get update -y
 apt-get install -y python3-pip python3-venv git postgresql-client
 
 cd /home/ubuntu
-git clone https://github.com/kngarcia/backend-aerolinea.git || true
-cd backend-aerolinea
+git clone https://github.com/kngarcia/airline_system.git || true
+cd airline_system
 
 python3 -m venv venv
 source venv/bin/activate
@@ -259,7 +259,7 @@ done
 # Create tables on RDS
 python3 -c "
 import psycopg2
-conn = psycopg2.connect(host='$RDS_HOST', port=5432, dbname='sistema_reservas', user='postgres', password='ClaveLocal123')
+conn = psycopg2.connect(host='$RDS_HOST', port=5432, dbname='sistema_reservas', user='postgres', password=os.environ['DB_PASSWORD'])
 cur = conn.cursor()
 cur.execute('''
 CREATE TABLE IF NOT EXISTS flights (
@@ -292,7 +292,7 @@ print('Tables created on RDS!')
 export DB_HOST=$RDS_HOST
 export DB_PORT=5432
 export DB_USER=postgres
-export DB_PASSWORD=ClaveLocal123
+export DB_PASSWORD=__SET_BY_DEPLOYER__
 export DB_NAME=sistema_reservas
 export ATHENA_DATABASE=airline_analytics
 export ATHENA_OUTPUT="s3://{BUCKET}/athena-results/"

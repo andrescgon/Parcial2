@@ -12,7 +12,7 @@ class Settings(BaseSettings):
     DB_HOST: str = os.getenv("DB_HOST", default_host)
     DB_NAME: str = os.getenv("DB_NAME", "sistema_reservas")
     DB_USER: str = os.getenv("DB_USER", "postgres")
-    DB_PASSWORD: str = os.getenv("DB_PASSWORD", "ClaveLocal123")
+    DB_PASSWORD: str = os.getenv("DB_PASSWORD", "")
     DB_PORT: str = os.getenv("DB_PORT", default_port)
 
     # AWS Athena configuration
