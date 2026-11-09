@@ -3,7 +3,7 @@
 **Estudiantes:** Kevin Nicolai García Rodríguez & Andrés Castro Gonzáles  
 **Universidad Sergio Arboleda - Escuela de Ciencias Exactas e Ingeniería**  
 **Seed Asignado:** 3604  
-**Cuenta AWS:** 723400800674 (us-east-1)  
+**Cuenta AWS:** <AWS_ACCOUNT_ID> (us-east-1)  
 
 ---
 
@@ -121,7 +121,7 @@ line_items:
 ## 6. Resultados del Harness
 
 Ejecución completa del harness del profesor contra el sistema desplegado (semilla 3604,
-cuenta 723400800674, backend y frontend en `http://98.83.6.16:8000`). El `report.md`
+cuenta <AWS_ACCOUNT_ID>, backend y frontend en `http://<EC2_PUBLIC_IP>:8000`). El `report.md`
 generado se incluye en la entrega.
 
 **Puntaje automatizado: 70.0 / 70.0 — 23 pruebas, 0 fallos, 3 min 03 s.**
@@ -143,7 +143,7 @@ generado se incluye en la entrega.
 
 ### 6.1. Observaciones sobre la verificación
 
-**Cambio de cuenta AWS.** La primera cuenta usada (849080627808) hacía fallar dos requisitos
+**Cambio de cuenta AWS.** La primera cuenta usada (<AWS_ACCOUNT_ID_2>) hacía fallar dos requisitos
 antes de escribir una línea de código, por historial ajeno a este proyecto. El harness
 consulta la cuenta completa, no sólo los recursos del parcial:
 
